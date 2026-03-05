@@ -1,4 +1,9 @@
-# Use Cases
+<div align="center">
+  <img src="./images/lemipay-logo.png" width="40" height="40" alt="lemipay">
+</div>
+
+# Casos de Uso
+Casos de uso para los distintos Actores
 
 ## Logged User
 
@@ -27,4 +32,8 @@
 
 - Sign in usando wallets  
 - Sign in using mail (abstracted from account)  
-- Review Docs  
+- Review Docs
+
+---
+
+<p align="center"> ⚡ by <b>LemiPay</b> </p>
