@@ -1,4 +1,8 @@
-# LemiPay: Abstract <img src="./images/lemipay-logo copy.jpeg" width="30" height="30" alt="lemipay">
+<div align="center">
+  <img src="./images/lemipay-logo.png" width="30" height="30" alt="lemipay">
+</div>
+
+# LemiPay: Abstract
 
 > Lemipay es una aplicación descentralizada (dApp) construida sobre el ecosistema de Ethereum que transforma la gestión de gastos grupales mediante el uso de contratos inteligentes y tesorerías compartidas. 
 
