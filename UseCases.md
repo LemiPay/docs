@@ -7,6 +7,7 @@ Casos de uso para los distintos Actores
 
 ## Logged User
 
+- Unirse a un grupo, si se lo invita
 - Ver los grupos que forma parte y sus detalles  
 - Fondear la tesorería del grupo (ya sea crypto o algún servicio on-ramp)  
 - Proponer un gasto  
