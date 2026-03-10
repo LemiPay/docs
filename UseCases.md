@@ -25,7 +25,8 @@ Casos de uso para los distintos Actores
 - disolver el grupo  
 - Definir umbral de aprobación para gastos/inversiones etc (cuantos votos hay que tener)  
 - Agregar o remover gente del grupo  
-- Todo lo que puede hacer un Logged User  
+- Todo lo que puede hacer un Logged User
+- configurar si se aceptan pagos con plata personal o solo con el fondo
 
 ---
 
