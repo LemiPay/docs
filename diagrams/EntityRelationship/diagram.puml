@@ -1,0 +1,73 @@
+@startuml
+package "User Things" {
+    entity "User" {
+      +id : uuid
+      --
+      password : string
+      authToken : string
+      nombre : string
+      email : string
+      wallet : string
+    }
+
+    entity "UserConfig" {
+        +userId : uuid <<FK>>
+    }
+}
+
+entity "Group" {
+    +id: string
+    ---
+    name: string
+    description: string
+    ownerId: uuid <<FK>>
+    mainCurrencyId: uuid <<FK>>
+}
+
+entity "Transaction" {
+    +id : uuid
+    ---
+    amount: signed int
+' If negative -> withdraw, else -> deposit
+    userId: uuid <<FK>>
+    groupId: uuid <<FK>>
+    description: string
+}
+
+entity "Currency" {
+    +id: uuid
+    ---
+    priceApi: string
+    name: string
+    ticker: string
+}
+
+entity "Expense" {
+    +id: uuid
+    ---
+    fromUserId: uuid <<FK>>
+    currencyId: uuid <<FK>>
+    groupId: uuid <<FK>>
+    description: string
+    amount: float
+}
+
+User ||--|| UserConfig : Has config
+User }o--o{ Group : Is in
+User }o--o{ Group : Is Admin
+User ||--o{ Expense : Makes
+
+Currency ||--o{ Expense: Has $
+Group ||--o{ Expense : Generates
+Currency ||--o{ Group : Has main currency
+
+
+Currency ||--o{ Transaction: Has $
+Group ||--o{ Transaction : Generates
+User ||--o{ Transaction : Makes
+
+User ||--|| User : Friends
+
+
+
+@enduml
