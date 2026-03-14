@@ -1,4 +1,6 @@
 @startuml entity-relationship
+
+
 package "User Things" {
     entity "User" {
       +id : uuid
@@ -7,7 +9,7 @@ package "User Things" {
       authToken : string
       nombre : string
       email : string
-      wallet : string
+      wallet : string <<FK>>
     }
 
     entity "UserConfig" {
@@ -19,7 +21,7 @@ package "User Things" {
 
 package "Group Things"{
     entity "Group" {
-    +id: string
+    +id: uuid
     ---
     name: string
     description: string
@@ -28,10 +30,26 @@ package "Group Things"{
     }
     entity "GroupConfig"{
         +groupId: uuid <<FK>>
-        +approvalRule: int
-        +expenseLimit: int
-        +isPrivate: bool
+        ---
+        approvalRule: int
+        expenseLimit: int
+        isPrivate: bool
     }
+}
+
+entity "Friend"{
+    +user1Id: uuid <<FK>>
+    +user2Id: uuid <<FK>>
+}
+
+entity "Wallet"{
+    +address: string
+    'Solo uno de los id puede tener valor el otro seria nulo'
+    +userId:  uuid <<FK>>
+    +groupId: uuid <<FK>>
+    ---
+    balance: uint256
+    currencyId: uuid <<FK>>
 }
 
 
@@ -39,7 +57,7 @@ package "Group Things"{
 entity "Transaction" {
     +id : uuid
     ---
-    amount: signed int
+    amount: uint256
 ' If negative -> withdraw, else -> deposit
     userId: uuid <<FK>>
     groupId: uuid <<FK>>
@@ -53,6 +71,12 @@ entity "Currency" {
     name: string
     ticker: string
 }
+entity "UserInGroup"{
+    +userId: uuid <<FK>>
+    +groupId: uuid <<FK>>
+    ---
+    isAdmin: bool
+}
 
 entity "Expense" {
     +id: uuid
@@ -61,25 +85,41 @@ entity "Expense" {
     currencyId: uuid <<FK>>
     groupId: uuid <<FK>>
     description: string
-    amount: float
+    amount: uint256
+    status: uuid <<FK>>
+    
 }
 
+entity "Status"{
+    'Podrían ser PENDING, APPROVED, REJECTED'
+    +id: uuid
+    description: String
+}
+
+
 User ||--|| UserConfig : Has config
-User }o--o{ Group : Is in
-User }o--o{ Group : Is Admin
 User ||--o{ Expense : Makes
+
+User ||--o{ UserInGroup
+Group ||--o{ UserInGroup
+
 
 Currency ||--o{ Expense: Has $
 Group ||--o{ Expense : Generates
 Currency ||--o{ Group : Has main currency
 
+Currency ||--o{ Wallet: Has $
+User ||--|| Wallet
+Group ||--|| Wallet
 
 Currency ||--o{ Transaction: Has $
 Group ||--o{ Transaction : Generates
 User ||--o{ Transaction : Makes
 
-User ||--|| User : Friends
+User ||--o{ Friend
 Group ||--|| GroupConfig: Has config
+
+Expense }o--|| Status: has a status of
 
 
 @enduml
