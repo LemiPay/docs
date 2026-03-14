@@ -1,4 +1,4 @@
-@startuml
+@startuml entity-relationship
 package "User Things" {
     entity "User" {
       +id : uuid
@@ -12,17 +12,29 @@ package "User Things" {
 
     entity "UserConfig" {
         +userId : uuid <<FK>>
+        +mailNotifications: bool
+        +smsNotifications: bool
     }
 }
 
-entity "Group" {
+package "Group Things"{
+    entity "Group" {
     +id: string
     ---
     name: string
     description: string
     ownerId: uuid <<FK>>
     mainCurrencyId: uuid <<FK>>
+    }
+    entity "GroupConfig"{
+        +groupId: uuid <<FK>>
+        +approvalRule: int
+        +expenseLimit: int
+        +isPrivate: bool
+    }
 }
+
+
 
 entity "Transaction" {
     +id : uuid
@@ -67,7 +79,7 @@ Group ||--o{ Transaction : Generates
 User ||--o{ Transaction : Makes
 
 User ||--|| User : Friends
-
+Group ||--|| GroupConfig: Has config
 
 
 @enduml
