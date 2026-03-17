@@ -51,11 +51,16 @@ entity "NewMemberProposal"{
     status: uuid <<FK>>
 }
 
-entity "Wallet"{
+entity "UserWallet"{
     +address: string
-    'Solo uno de los id puede tener valor el otro seria nulo'
     +userId:  uuid <<FK>>
-    +groupId: uuid <<FK>>
+    ---
+    balance: uint256
+    currencyId: uuid <<FK>>
+}
+entity "GroupWallet"{
+    +address: string
+    +groupId:  uuid <<FK>>
     ---
     balance: uint256
     currencyId: uuid <<FK>>
@@ -118,9 +123,10 @@ Currency ||--o{ Expense: Has $
 Group ||--o{ Expense : Generates
 Currency ||--o{ Group : Has main currency
 
-Currency ||--o{ Wallet: Has $
-User ||--|| Wallet
-Group ||--|| Wallet
+Currency ||--o{ UserWallet: Has $
+Currency ||--o{ GroupWallet: Has $
+User ||--|| UserWallet
+Group ||--|| GroupWallet
 
 Currency ||--o{ Transaction: Has $
 Group ||--o{ Transaction : Generates
