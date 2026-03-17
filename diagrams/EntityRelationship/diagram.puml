@@ -9,7 +9,6 @@ package "User Things" {
       authToken : string
       nombre : string
       email : string
-      wallet : string <<FK>>
     }
 
     entity "UserConfig" {
@@ -41,6 +40,16 @@ entity "Friend"{
     +user1Id: uuid <<FK>>
     +user2Id: uuid <<FK>>
 }
+'chequeos de que el que invita sea admin del grupo'
+'que el nuevo miembro no sea parte del grupo'
+entity "NewMemberProposal"{
+    NewMemberProposalId: uuid
+    ---
+    newMemberId: uuid <<FK>>
+    groupId: uuid <<FK>>
+    adminId: uuid <<FK>>
+    status: uuid <<FK>>
+}
 
 entity "Wallet"{
     +address: string
@@ -62,7 +71,6 @@ entity "Transaction" {
     userId: uuid <<FK>>
     groupId: uuid <<FK>>
     description: string
-    address: string
 }
 
 entity "Currency" {
@@ -88,6 +96,7 @@ entity "Expense" {
     description: string
     amount: uint256
     status: uuid <<FK>>
+    
 }
 
 entity "Status"{
@@ -121,5 +130,7 @@ Group ||--|| GroupConfig: Has config
 
 Expense }o--|| Status: has a status of
 
+User ||--o{ NewMemberProposal
+Group ||--o{ NewMemberProposal
 
 @enduml
