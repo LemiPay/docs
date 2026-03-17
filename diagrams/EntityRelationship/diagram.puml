@@ -115,13 +115,26 @@ entity "Vote"{
     vote: enum
 
 }
+
+'Una contibucion al fundround es una transaccion positiva al grupo'
+entity "FundRoundContribution"{
+    +fundRoundId: uuid <<FK>>
+    +userId: uuid <<FK>>
+    --- 
+    amount: NUMERIC
+    transactionId: uuid <<FK>>
+}
+
 entity "Proposal"{
     +proposalId: uuid
     groupId: uuid <<FK>>
     createdBy: uuid <<FK>>
     status: enum
-
-
+}
+entity "FundRoundProposal"{
+    +proposalId: uuid <<FK>>
+    targetAmount: NUMERIC
+    status: enum
 }
 'chequeos de que el que invita sea admin del grupo'
 'que el nuevo miembro no sea parte del grupo'
@@ -135,6 +148,22 @@ entity "WithdrawProposal"{
     +proposalId: uuid <<FK>>
     ---
     amount: NUMERIC
+}
+
+entity "InvestmentStrategy"{
+    +id: uuid
+    --- 
+    name: string
+    description: string
+    expectedReturn: NUMERIC
+
+}
+entity "InvestmentProposal"{
+    +proposalId<<FK>>
+    ---
+    strategyId: uuid <<FK>>
+    amount: NUMERIC
+    status: enum
 }
 
 
@@ -163,7 +192,10 @@ User ||--o{ Transaction : Makes
 User ||--o{ Friend
 Group ||--|| GroupConfig: Has config
 
-
+Proposal ||--|| FundRoundProposal :is a 
+FundRoundProposal ||--o{ FundRoundContribution
+User ||--o{ FundRoundContribution
+Transaction ||--o{ FundRoundContribution
 
 
 Proposal }o--|| User
