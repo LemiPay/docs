@@ -159,7 +159,6 @@ package "Governance" {
         +proposalId: uuid <<FK>>
         --
         targetAmount: NUMERIC
-        status: enum
     }
 }
 
