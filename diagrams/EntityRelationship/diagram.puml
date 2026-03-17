@@ -84,6 +84,7 @@ entity "UserInGroup"{
     +userId: uuid <<FK>>
     +groupId: uuid <<FK>>
     ---
+    balance: float
     isAdmin: bool
 }
 
