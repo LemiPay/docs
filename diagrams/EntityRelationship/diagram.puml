@@ -40,16 +40,7 @@ entity "Friend"{
     +user1Id: uuid <<FK>>
     +user2Id: uuid <<FK>>
 }
-'chequeos de que el que invita sea admin del grupo'
-'que el nuevo miembro no sea parte del grupo'
-entity "NewMemberProposal"{
-    NewMemberProposalId: uuid
-    ---
-    newMemberId: uuid <<FK>>
-    groupId: uuid <<FK>>
-    adminId: uuid <<FK>>
-    status: uuid <<FK>>
-}
+
 
 entity "UserWallet"{
     +address: string
@@ -132,9 +123,16 @@ entity "Proposal"{
 
 
 }
+'chequeos de que el que invita sea admin del grupo'
+'que el nuevo miembro no sea parte del grupo'
+entity "NewMemberProposal"{
+    +proposalId: uuid <<FK>>
+    ---
+    newMemberId: uuid <<FK>>
+}
 
 entity "WithdrawProposal"{
-    +proposalId: uuid
+    +proposalId: uuid <<FK>>
     ---
     amount: float
 }
@@ -165,8 +163,7 @@ User ||--o{ Friend
 Group ||--|| GroupConfig: Has config
 
 
-User ||--o{ NewMemberProposal
-Group ||--o{ NewMemberProposal
+
 
 Proposal }o--|| User
 Proposal }o--|| Group
@@ -178,5 +175,7 @@ User ||--o{ TransactionParticipant
 
 Proposal ||--o{ Votes
 Proposal ||--|| WithdrawProposal: is a
+Proposal ||--|| NewMemberProposal: is a
+
 
 @enduml
