@@ -109,9 +109,17 @@ entity "ExpenseParticipant"{
     --
     amount: float
 }
+entity "Votes"{
+    +proposalId: uuid <<FK>>
+    +userId: uuid <<FK>>
+    ---
+    'Por ahi se puede reciclar esta clase para otras propuestas'
+    +typeOfProposal: enum
+
+}
 
 entity "WithdrawProposal"{
-    +proposalID: uuid
+    +proposalId: uuid
     ---
     groupId: uuid <<FK>>
     proposerId: uuid <<FK>>
@@ -157,5 +165,10 @@ Group ||--o{ NewMemberProposal
 WithdrawProposal }o--|| User
 WithdrawProposal }o--|| Group
 WithdrawProposal }o--|| Status
+
+Expense ||--o{ ExpenseParticipant
+User ||--o{ ExpenseParticipant
+
+WithdrawProposal ||--o{ Votes
 
 @enduml
