@@ -110,6 +110,15 @@ entity "ExpenseParticipant"{
     amount: float
 }
 
+entity "WithdrawProposal"{
+    +proposalID: uuid
+    ---
+    groupId: uuid <<FK>>
+    proposerId: uuid <<FK>>
+    amount: float
+    status: uuid <<FK>>
+}
+
 entity "Status"{
     'Podrían ser PENDING, APPROVED, REJECTED'
     +id: uuid
@@ -144,5 +153,9 @@ Expense }o--|| Status: has a status of
 
 User ||--o{ NewMemberProposal
 Group ||--o{ NewMemberProposal
+
+WithdrawProposal }o--|| User
+WithdrawProposal }o--|| Group
+WithdrawProposal }o--|| Status
 
 @enduml
