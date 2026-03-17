@@ -1,7 +1,7 @@
 @startuml entity-relationship
 
+package "Users" {
 
-package "User Things" {
     entity "User" {
       +id : uuid
       --
@@ -13,202 +13,217 @@ package "User Things" {
 
     entity "UserConfig" {
         +userId : uuid <<FK>>
-        +mailNotifications: bool
-        +smsNotifications: bool
+        --
+        mailNotifications: bool
+        smsNotifications: bool
+    }
+
+    entity "Friend"{
+        +user1Id: uuid <<FK>>
+        +user2Id: uuid <<FK>>
+        --
+        status: enum
+    }
+
+    entity "UserWallet"{
+        +address: string
+        +userId:  uuid <<FK>>
+        --
+        balance: NUMERIC
+        currencyId: uuid <<FK>>
     }
 }
 
-package "Group Things"{
+package "Groups" {
+
     entity "Group" {
-    +id: uuid
-    ---
-    name: string
-    description: string
-    mainCurrencyId: uuid <<FK>>
+        +id: uuid
+        --
+        name: string
+        description: string
+        mainCurrencyId: uuid <<FK>>
     }
+
     entity "GroupConfig"{
         +groupId: uuid <<FK>>
-        ---
+        --
         quorum: int
         expenseLimit: int
         isPrivate: bool
     }
+
+    entity "GroupWallet"{
+        +address: string
+        +groupId:  uuid <<FK>>
+        --
+        balance: NUMERIC
+        currencyId: uuid <<FK>>
+    }
+
+    entity "UserInGroup"{
+        +userId: uuid <<FK>>
+        +groupId: uuid <<FK>>
+        --
+        isAdmin: bool
+    }
 }
 
-entity "Friend"{
-    +user1Id: uuid <<FK>>
-    +user2Id: uuid <<FK>>
-    ---
-    status: enum
+package "Treasury" {
+
+    entity "Currency" {
+        +id: uuid
+        --
+        name: string
+        ticker: string
+    }
+
+    entity "Transaction" {
+        +id: uuid
+        --
+        txHash: string
+        amount: NUMERIC
+        userId: uuid <<FK>>
+        groupId: uuid <<FK>>
+        description: string
+        currencyId: uuid <<FK>>
+    }
+
+    entity "TransactionParticipant"{
+        +transactionId: uuid <<FK>>
+        +userId: uuid <<FK>>
+        --
+        amount: NUMERIC
+    }
+
+    entity "FundRoundContribution"{
+        +fundRoundId: uuid <<FK>>
+        +userId: uuid <<FK>>
+        --
+        amount: NUMERIC
+        transactionId: uuid <<FK>>
+    }
 }
 
+package "Expenses" {
 
-entity "UserWallet"{
-    +address: string
-    +userId:  uuid <<FK>>
-    ---
-    balance: NUMERIC
-    currencyId: uuid <<FK>>
-}
-entity "GroupWallet"{
-    +address: string
-    +groupId:  uuid <<FK>>
-    ---
-    balance: NUMERIC
-    currencyId: uuid <<FK>>
-}
+    entity "Expense" {
+        +id: uuid
+        --
+        fromUserId: uuid <<FK>>
+        currencyId: uuid <<FK>>
+        groupId: uuid <<FK>>
+        description: string
+        amount: NUMERIC
+        status: enum
+    }
 
-
-
-entity "Transaction" {
-    +id: uuid
-    ---
-    txHash: string
-    amount: NUMERIC
-' If negative -> withdraw, else -> deposit
-    userId: uuid <<FK>>
-    groupId: uuid <<FK>>
-    description: string
-    currencyId: uuid <<FK>>
+    entity "ExpenseParticipant"{
+        +expenseId: uuid <<FK>>
+        +userId: uuid <<FK>>
+        --
+        amount: NUMERIC
+    }
 }
 
-entity "Currency" {
-    +id: uuid
-    ---
-    name: string
-    ticker: string
-}
-entity "UserInGroup"{
-    +userId: uuid <<FK>>
-    +groupId: uuid <<FK>>
-    ---
-    isAdmin: bool
+package "Governance" {
+
+    entity "Proposal"{
+        +proposalId: uuid
+        groupId: uuid <<FK>>
+        createdBy: uuid <<FK>>
+        status: enum
+    }
+
+    entity "Vote"{
+        +proposalId: uuid <<FK>>
+        +userId: uuid <<FK>>
+        --
+        vote: enum
+    }
+
+    entity "WithdrawProposal"{
+        +proposalId: uuid <<FK>>
+        --
+        amount: NUMERIC
+    }
+
+    entity "NewMemberProposal"{
+        +proposalId: uuid <<FK>>
+        --
+        newMemberId: uuid <<FK>>
+    }
+
+    entity "FundRoundProposal"{
+        +proposalId: uuid <<FK>>
+        --
+        targetAmount: NUMERIC
+        status: enum
+    }
 }
 
-entity "Expense" {
-    +id: uuid
-    ---
-    fromUserId: uuid <<FK>>
-    currencyId: uuid <<FK>>
-    groupId: uuid <<FK>>
-    description: string
-    amount: NUMERIC
-    status: enum
-}
-entity "ExpenseParticipant"{
-    +expenseId: uuid <<FK>>
-    +userId: uuid <<FK>>
-    --
-    amount: NUMERIC
-}
-entity "TransactionParticipant"{
-    +transactionId: uuid <<FK>>
-    +userId: uuid <<FK>>
-    --
-    amount: NUMERIC
-}
-entity "Vote"{
-    +proposalId: uuid <<FK>>
-    +userId: uuid <<FK>>
-    ---
-    'REJECT, APPROVE'
-    vote: enum
+package "Investments" {
 
+    entity "InvestmentStrategy"{
+        +id: uuid
+        --
+        name: string
+        description: string
+        expectedReturn: NUMERIC
+    }
+
+    entity "InvestmentProposal"{
+        +proposalId <<FK>>
+        --
+        strategyId: uuid <<FK>>
+        amount: NUMERIC
+        status: enum
+    }
 }
 
-'Una contibucion al fundround es una transaccion positiva al grupo'
-entity "FundRoundContribution"{
-    +fundRoundId: uuid <<FK>>
-    +userId: uuid <<FK>>
-    --- 
-    amount: NUMERIC
-    transactionId: uuid <<FK>>
-}
+'================ RELATIONS =================
 
-entity "Proposal"{
-    +proposalId: uuid
-    groupId: uuid <<FK>>
-    createdBy: uuid <<FK>>
-    status: enum
-}
-entity "FundRoundProposal"{
-    +proposalId: uuid <<FK>>
-    targetAmount: NUMERIC
-    status: enum
-}
-'chequeos de que el que invita sea admin del grupo'
-'que el nuevo miembro no sea parte del grupo'
-entity "NewMemberProposal"{
-    +proposalId: uuid <<FK>>
-    ---
-    newMemberId: uuid <<FK>>
-}
-
-entity "WithdrawProposal"{
-    +proposalId: uuid <<FK>>
-    ---
-    amount: NUMERIC
-}
-
-entity "InvestmentStrategy"{
-    +id: uuid
-    --- 
-    name: string
-    description: string
-    expectedReturn: NUMERIC
-
-}
-entity "InvestmentProposal"{
-    +proposalId<<FK>>
-    ---
-    strategyId: uuid <<FK>>
-    amount: NUMERIC
-    status: enum
-}
-
-
-
-User ||--|| UserConfig : Has config
-User ||--o{ Expense : Makes
+User ||--|| UserConfig
+User ||--o{ Friend
+User ||--o{ UserWallet
 
 User ||--o{ UserInGroup
 Group ||--o{ UserInGroup
 
-
-Currency ||--o{ Expense: Has $
-Group ||--o{ Expense : Generates
-Currency ||--o{ Group : Has main currency
-
-Currency ||--o{ UserWallet: Has $
-Currency ||--o{ GroupWallet: Has $
-User ||--o{ UserWallet
+Group ||--|| GroupConfig
 Group ||--o{ GroupWallet
 
+Currency ||--o{ Group
+Currency ||--o{ UserWallet
+Currency ||--o{ GroupWallet
 
-Currency ||--o{ Transaction: Has $
-Group ||--o{ Transaction : Generates
-User ||--o{ Transaction : Makes
+User ||--o{ Expense
+Group ||--o{ Expense
+Currency ||--o{ Expense
 
-User ||--o{ Friend
-Group ||--|| GroupConfig: Has config
+Expense ||--o{ ExpenseParticipant
+User ||--o{ ExpenseParticipant
 
-Proposal ||--|| FundRoundProposal :is a 
-FundRoundProposal ||--o{ FundRoundContribution
-User ||--o{ FundRoundContribution
-Transaction ||--o{ FundRoundContribution
+User ||--o{ Transaction
+Group ||--o{ Transaction
+Currency ||--o{ Transaction
 
+Transaction ||--o{ TransactionParticipant
+User ||--o{ TransactionParticipant
 
 Proposal }o--|| User
 Proposal }o--|| Group
 
-Expense ||--o{ ExpenseParticipant
-User ||--o{ ExpenseParticipant
-Transaction ||--o{ TransactionParticipant
-User ||--o{ TransactionParticipant
-
 Proposal ||--o{ Vote
-Proposal ||--|| WithdrawProposal: is a
-Proposal ||--|| NewMemberProposal: is a
 
+Proposal ||--|| WithdrawProposal
+Proposal ||--|| NewMemberProposal
+Proposal ||--|| FundRoundProposal
+Proposal ||--|| InvestmentProposal
+
+FundRoundProposal ||--o{ FundRoundContribution
+User ||--o{ FundRoundContribution
+Transaction ||--o{ FundRoundContribution
+
+InvestmentStrategy ||--o{ InvestmentProposal
 
 @enduml
