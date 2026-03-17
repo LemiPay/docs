@@ -9,6 +9,8 @@ package "Users" {
       authToken : string
       name : string
       email : string
+      createdAt: date
+      updatedAt: date
     }
 
     entity "UserConfig" {
@@ -23,6 +25,8 @@ package "Users" {
         +user2Id: uuid <<FK>>
         --
         status: enum
+        createdAt: date
+        updatedAt: date
     }
 
     entity "UserWallet"{
@@ -42,6 +46,8 @@ package "Groups" {
         name: string
         description: string
         mainCurrencyId: uuid <<FK>>
+        createdAt: date
+        updatedAt: date
     }
 
     entity "GroupConfig"{
@@ -64,7 +70,9 @@ package "Groups" {
         +userId: uuid <<FK>>
         +groupId: uuid <<FK>>
         --
-        isAdmin: bool
+        isAdmin: 
+        createdAt: date
+        updatedAt: date
     }
 }
 
@@ -87,13 +95,17 @@ package "Treasury" {
         description: string
         currencyId: uuid <<FK>>
         type: enum
+        createdAt: date
+        updatedAt: date
     }
 
     entity "TransactionParticipant"{
         +transactionId: uuid <<FK>>
         +userId: uuid <<FK>>
         --
-        amount: NUMERIC
+        amount: 
+        createdAt: date
+        updatedAt: date
     }
 
     entity "FundRoundContribution"{
@@ -102,6 +114,8 @@ package "Treasury" {
         --
         amount: NUMERIC
         transactionId: uuid <<FK>>
+        createdAt: date
+        updatedAt: date
     }
 }
 
@@ -116,6 +130,8 @@ package "Expenses" {
         description: string
         amount: NUMERIC
         status: enum
+        createdAt: date
+        updatedAt: date
     }
 
     entity "ExpenseParticipant"{
@@ -123,17 +139,20 @@ package "Expenses" {
         +userId: uuid <<FK>>
         --
         amount: NUMERIC
+        createdAt: date
+        updatedAt: date
     }
 }
 
 package "Governance" {
-
     entity "Proposal"{
         +proposalId: uuid
         ---
         groupId: uuid <<FK>>
         createdBy: uuid <<FK>>
         status: enum
+        createdAt: date
+        updatedAt: date
     }
 
     entity "Vote"{
@@ -141,6 +160,7 @@ package "Governance" {
         +userId: uuid <<FK>>
         --
         vote: enum
+        createdAt: date
     }
 
     entity "WithdrawProposal"{
@@ -178,6 +198,8 @@ package "Investments" {
         strategyId: uuid <<FK>>
         amount: NUMERIC
         status: enum
+        createdAt: date
+        updatedAt: date
     }
 }
 
