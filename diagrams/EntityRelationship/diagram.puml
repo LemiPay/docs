@@ -76,6 +76,7 @@ entity "Transaction" {
     userId: uuid <<FK>>
     groupId: uuid <<FK>>
     description: string
+    currencyId: uuid <<FK>>
 }
 
 entity "Currency" {
@@ -89,7 +90,6 @@ entity "UserInGroup"{
     +userId: uuid <<FK>>
     +groupId: uuid <<FK>>
     ---
-    balance: float
     isAdmin: bool
 }
 
@@ -102,7 +102,12 @@ entity "Expense" {
     description: string
     amount: uint256
     status: uuid <<FK>>
-    
+}
+entity "ExpenseParticipant"{
+    +expenseId: uuid <<FK>>
+    +userId: uuid <<FK>>
+    --
+    amount: float
 }
 
 entity "Status"{
