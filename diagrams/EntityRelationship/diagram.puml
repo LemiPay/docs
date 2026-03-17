@@ -48,6 +48,7 @@ package "Groups" {
         mainCurrencyId: uuid <<FK>>
         createdAt: date
         updatedAt: date
+        isActive: bool
     }
 
     entity "GroupConfig"{
@@ -70,9 +71,11 @@ package "Groups" {
         +userId: uuid <<FK>>
         +groupId: uuid <<FK>>
         --
-        isAdmin: 
+        isAdmin: bool
+        isInGroup: bool
         createdAt: date
         updatedAt: date
+        
     }
 }
 
