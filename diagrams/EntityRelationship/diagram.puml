@@ -7,7 +7,7 @@ package "User Things" {
       --
       password : string
       authToken : string
-      nombre : string
+      name : string
       email : string
     }
 
@@ -24,7 +24,6 @@ package "Group Things"{
     ---
     name: string
     description: string
-    ownerId: uuid <<FK>>
     mainCurrencyId: uuid <<FK>>
     }
     entity "GroupConfig"{
@@ -39,6 +38,8 @@ package "Group Things"{
 entity "Friend"{
     +user1Id: uuid <<FK>>
     +user2Id: uuid <<FK>>
+    ---
+    status: enum
 }
 
 
@@ -53,16 +54,17 @@ entity "GroupWallet"{
     +address: string
     +groupId:  uuid <<FK>>
     ---
-    balance: uint256
+    balance: NUMERIC
     currencyId: uuid <<FK>>
 }
 
 
 
 entity "Transaction" {
-    +id : uuid
+    +id: uuid
     ---
-    amount: uint256
+    txHash: string
+    amount: NUMERIC
 ' If negative -> withdraw, else -> deposit
     userId: uuid <<FK>>
     groupId: uuid <<FK>>
@@ -73,7 +75,6 @@ entity "Transaction" {
 entity "Currency" {
     +id: uuid
     ---
-    priceApi: string
     name: string
     ticker: string
 }
@@ -91,22 +92,22 @@ entity "Expense" {
     currencyId: uuid <<FK>>
     groupId: uuid <<FK>>
     description: string
-    amount: uint256
-    status: uuid <<FK>>
+    amount: NUMERIC
+    status: enum
 }
 entity "ExpenseParticipant"{
     +expenseId: uuid <<FK>>
     +userId: uuid <<FK>>
     --
-    amount: float
+    amount: NUMERIC
 }
 entity "TransactionParticipant"{
     +transactionId: uuid <<FK>>
     +userId: uuid <<FK>>
     --
-    amount: float
+    amount: NUMERIC
 }
-entity "Votes"{
+entity "Vote"{
     +proposalId: uuid <<FK>>
     +userId: uuid <<FK>>
     ---
@@ -118,7 +119,6 @@ entity "Proposal"{
     +proposalId: uuid
     groupId: uuid <<FK>>
     createdBy: uuid <<FK>>
-    type: enum
     status: enum
 
 
@@ -134,7 +134,7 @@ entity "NewMemberProposal"{
 entity "WithdrawProposal"{
     +proposalId: uuid <<FK>>
     ---
-    amount: float
+    amount: NUMERIC
 }
 
 
@@ -152,8 +152,9 @@ Currency ||--o{ Group : Has main currency
 
 Currency ||--o{ UserWallet: Has $
 Currency ||--o{ GroupWallet: Has $
-User ||--|| UserWallet
-Group ||--|| GroupWallet
+User ||--o{ UserWallet
+Group ||--o{ GroupWallet
+
 
 Currency ||--o{ Transaction: Has $
 Group ||--o{ Transaction : Generates
@@ -173,7 +174,7 @@ User ||--o{ ExpenseParticipant
 Transaction ||--o{ TransactionParticipant
 User ||--o{ TransactionParticipant
 
-Proposal ||--o{ Votes
+Proposal ||--o{ Vote
 Proposal ||--|| WithdrawProposal: is a
 Proposal ||--|| NewMemberProposal: is a
 
