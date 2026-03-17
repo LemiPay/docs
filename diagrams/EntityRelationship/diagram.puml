@@ -30,7 +30,7 @@ package "Group Things"{
     entity "GroupConfig"{
         +groupId: uuid <<FK>>
         ---
-        approvalRule: int
+        quorum: int
         expenseLimit: int
         isPrivate: bool
     }
@@ -55,7 +55,7 @@ entity "UserWallet"{
     +address: string
     +userId:  uuid <<FK>>
     ---
-    balance: uint256
+    balance: NUMERIC
     currencyId: uuid <<FK>>
 }
 entity "GroupWallet"{
@@ -109,29 +109,36 @@ entity "ExpenseParticipant"{
     --
     amount: float
 }
+entity "TransactionParticipant"{
+    +transactionId: uuid <<FK>>
+    +userId: uuid <<FK>>
+    --
+    amount: float
+}
 entity "Votes"{
     +proposalId: uuid <<FK>>
     +userId: uuid <<FK>>
     ---
-    'Por ahi se puede reciclar esta clase para otras propuestas'
-    +typeOfProposal: enum
+    'REJECT, APPROVE'
+    vote: enum
+
+}
+entity "Proposal"{
+    +proposalId: uuid
+    groupId: uuid <<FK>>
+    createdBy: uuid <<FK>>
+    type: enum
+    status: enum
+
 
 }
 
 entity "WithdrawProposal"{
     +proposalId: uuid
     ---
-    groupId: uuid <<FK>>
-    proposerId: uuid <<FK>>
     amount: float
-    status: uuid <<FK>>
 }
 
-entity "Status"{
-    'Podrían ser PENDING, APPROVED, REJECTED'
-    +id: uuid
-    description: String
-}
 
 
 User ||--|| UserConfig : Has config
@@ -157,18 +164,19 @@ User ||--o{ Transaction : Makes
 User ||--o{ Friend
 Group ||--|| GroupConfig: Has config
 
-Expense }o--|| Status: has a status of
 
 User ||--o{ NewMemberProposal
 Group ||--o{ NewMemberProposal
 
-WithdrawProposal }o--|| User
-WithdrawProposal }o--|| Group
-WithdrawProposal }o--|| Status
+Proposal }o--|| User
+Proposal }o--|| Group
 
 Expense ||--o{ ExpenseParticipant
 User ||--o{ ExpenseParticipant
+Transaction ||--o{ TransactionParticipant
+User ||--o{ TransactionParticipant
 
-WithdrawProposal ||--o{ Votes
+Proposal ||--o{ Votes
+Proposal ||--|| WithdrawProposal: is a
 
 @enduml
