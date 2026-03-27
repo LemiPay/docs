@@ -71,11 +71,11 @@ package "Groups" {
         +userId: uuid <<FK>>
         +groupId: uuid <<FK>>
         --
-        isAdmin: bool
-        isInGroup: bool
-        createdAt: date
-        updatedAt: date
+        role: group_role
+        status: group_member_status
         
+        joinedAt: date
+        updatedAt: date
     }
 }
 
