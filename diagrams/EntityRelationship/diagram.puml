@@ -170,6 +170,7 @@ package "Governance" {
         +proposalId: uuid <<FK>>
         --
         amount: NUMERIC
+        currency_id: uuid <<FK>>
     }
 
     entity "NewMemberProposal"{
