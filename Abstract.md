@@ -4,29 +4,39 @@
 
 # LemiPay: Abstract
 
-Lemipay es una aplicación descentralizada (dApp) construida sobre el ecosistema de Ethereum que transforma la gestión de gastos grupales mediante el uso de contratos inteligentes y tesorerías compartidas. 
+LemiPay es una aplicación web de gastos compartidos (tipo Splitwise) con un camino hacia tesorerías grupales on-chain. El código vive en `core/`: frontend SvelteKit (`core/client`) y API Rust/Axum (`core/server`), con PostgreSQL.
 
-A diferencia de las soluciones tradicionales que dependen de la confianza manual y registros externos, Lemipay permite a los usuarios crear grupos con fondos comunes reales, donde cada gasto es transparente y requiere la aprobación de los miembros. 
+El producto **día 1** no es una dApp completa. Es el Core de división de gastos, con registro/login, grupos, amigos, expenses, balances y notificaciones. Tesorería, rondas de fondeo, inversiones, gobernanza de retiros, wallets on-chain, sync blockchain y chat de IA **existen en el código** y están apagados con feature flags (`GET /config`).
 
-## Funcionalidades Principales
+App live: https://lemipay.app/
 
-- **Tesorerías Grupales Inteligentes**:  
-  Creación de grupos con fondos comunes on-chain donde la custodia es colectiva y transparente.
+## Qué está encendido (Core)
 
-- **Gobernanza de Gastos**:  
-  Sistema de aprobación interna donde los fondos solo pueden ser liberados o gastados si los miembros del grupo validan la transacción.
+- Registro y login con email/contraseña, y login con wallet (Reown AppKit + challenge/verify en `/auth`).
+- Perfil, amigos, grupos, invitaciones a miembros (propuestas new-member).
+- Gastos (crear, dividir, editar/eliminar) y balances / settlements / claim.
+- Notificaciones in-app y emails básicos.
+- Permisos por rol en el grupo y resolución de deudas.
 
-- **Account Abstraction (ERC-4337)**:  
-  Eliminación de la complejidad Web3 mediante el uso de Smart Accounts, permitiendo inicios de sesión sociales, recuperación de cuentas y abstracción del pago de gas.
+## Qué existe en código pero está apagado
 
-- **Liquidación y Reajuste Automático**:  
-  Cálculo de deudas y aportes de cada usuario en tiempo real para mantener el balance del grupo actualizado, y función para ajuste de saldos automático una vez finalizado el grupo. 
+- Tesorerías / wallets de grupo, transacciones de fondo común.
+- Rondas de fondeo, propuestas de retiro, inversiones (estrategias, pulse, leverage).
+- Eventos on-chain y live sync del vault (`LemiPayVault` vía alloy).
+- Wallets on-chain en perfil (`/wallet`).
+- Chat de IA (`/ai`).
 
-- **Dashboard de Inversión DeFi**:  
-  Panel integrado para poner a trabajar el capital ocioso del fondo común en protocolos de Staking o activos tokenizados (RWA) para generar rendimientos grupales.
+Cambio de flags = deploy del backend. Detalle: [[02 - Core/SCOPE_DEL_CORE]] y [[02 - Core/FEATURE_FLAGS]].
 
-- **On-ramps Integrados**:  
-  Pasarelas de pago para fondear la tesorería directamente con moneda local o tarjetas, facilitando la entrada de usuarios sin experiencia previa en exchanges.
+## Qué no está implementado
+
+- On-ramps (Mercado Pago u otros): roadmap, no hay código de pasarela.
+- Panel `/admin` de super-admin: Sprint 2, no hay rutas ni guard.
+- Account Abstraction como producto (ERC-4337 “full”): el login web3 verifica firmas EOA y ERC-6492; no hay smart accounts propias ni abstracción de gas como feature de usuario.
+
+## Visión (no es el estado actual)
+
+Tesorerías grupales on-chain, gobernanza de fondos, DeFi sobre el capital ocioso y entrada con moneda local. Eso es el roadmap largo, no el lanzamiento. Ver [[01 - Roadmap/PRE_LAUNCH_ROADMAP]].
 
 ---
 

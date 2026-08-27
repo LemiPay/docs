@@ -1,256 +1,453 @@
 @startuml entity-relationship
+' Fuente: core/server/src/infrastructure/db/schema.rs
+' Flags: Core vs avanzadas — todas las tablas existen; las avanzadas están apagadas en runtime.
 
-package "Users" {
+title LemiPay ER — schema Diesel (core/server)
 
-    entity "User" {
+package "Users (Core)" {
+    entity "user" {
       +id : uuid
       --
-      password : string
-      authToken : string
-      name : string
-      email : string
-      createdAt: date
-      updatedAt: date
+      email : text <<unique>>
+      password : text <<nullable>>
+      name : text
     }
 
-    entity "UserConfig" {
-        +userId : uuid <<FK>>
-        --
-        mailNotifications: bool
-        smsNotifications: bool
+    entity "friend" {
+      +requester_id : uuid <<FK>>
+      +addressee_id : uuid <<FK>>
+      --
+      status : text
+      created_at : timestamp
+      updated_at : timestamp
     }
+    note right of "friend"
+      status: pending | accepted | rejected | blocked
+      PK (requester_id, addressee_id)
+      CHECK requester_id <> addressee_id
+    end note
+}
 
-    entity "Friend"{
-        +user1Id: uuid <<FK>>
-        +user2Id: uuid <<FK>>
-        --
-        status: enum
-        createdAt: date
-        updatedAt: date
+package "Groups (Core)" {
+    entity "group" {
+      +id : uuid
+      --
+      name : text
+      description : text
+      status : group_status
+      created_at : date
+      updated_at : date
     }
+    note right of "group"
+      group_status: Active | Ended | DebtResolution
+    end note
 
-    entity "UserWallet"{
-        +address: string
-        +userId:  uuid <<FK>>
-        --
-        balance: NUMERIC
-        currencyId: uuid <<FK>>
+    entity "user_in_group" {
+      +user_id : uuid <<FK>>
+      +group_id : uuid <<FK>>
+      --
+      role : group_role
+      status : group_member_status
+      joined_at : timestamp
+      updated_at : timestamp
+    }
+    note right of "user_in_group"
+      group_role: Admin | Member
+      group_member_status: Active | Banned | Left
+    end note
+
+    entity "group_permission" {
+      +group_id : uuid <<FK>>
+      +role : group_role
+      +action : varchar(50)
+      --
+      created_at : timestamp
     }
 }
 
-package "Groups" {
-
-    entity "Group" {
-        +id: uuid
-        --
-        name: string
-        description: string
-        mainCurrencyId: uuid <<FK>>
-        createdAt: date
-        updatedAt: date
-        isActive: bool
+package "Expenses + Balances (Core)" {
+    entity "expense" {
+      +expense_id : uuid
+      --
+      user_id : uuid <<FK>>
+      currency_id : uuid <<FK>>
+      group_id : uuid <<FK>>
+      description : text <<nullable>>
+      amount : numeric
+      status : expense_status
+      created_at : timestamp
+      updated_at : timestamp
     }
+    note right of "expense"
+      expense_status: Created | Verified | Updated | Deleted
+    end note
 
-    entity "GroupConfig"{
-        +groupId: uuid <<FK>>
-        --
-        quorum: int
-        expenseLimit: int
-        isPrivate: bool
-    }
-
-    entity "GroupWallet"{
-        +address: string
-        +groupId:  uuid <<FK>>
-        --
-        balance: NUMERIC
-        currencyId: uuid <<FK>>
-    }
-
-    entity "UserInGroup"{
-        +userId: uuid <<FK>>
-        +groupId: uuid <<FK>>
-        --
-        role: group_role
-        status: group_member_status
-        
-        joinedAt: date
-        updatedAt: date
+    entity "expense_participant" {
+      +expense_id : uuid <<FK>>
+      +user_id : uuid <<FK>>
+      --
+      amount : numeric
+      created_at : timestamp
+      updated_at : timestamp
     }
 }
 
-package "Treasury" {
-
-    entity "Currency" {
-        +id: uuid
-        --
-        name: string
-        ticker: string
+package "Notifications (Core)" {
+    entity "notification" {
+      +id : uuid
+      --
+      user_id : uuid <<FK>>
+      group_id : uuid <<FK, nullable>>
+      event_name : text
+      group_name : text <<nullable>>
+      read : bool
+      created_at : timestamp
     }
 
-    entity "Transaction" {
-        +id: uuid
-        --
-        txHash: string
-        amount: NUMERIC
-        userId: uuid <<FK>>
-        groupId: uuid <<FK>>
-        description: string
-        currencyId: uuid <<FK>>
-        type: enum
-        createdAt: date
-        updatedAt: date
+    entity "notification_event" {
+      +id : uuid
+      --
+      name : text
     }
 
-    entity "TransactionParticipant"{
-        +transactionId: uuid <<FK>>
-        +userId: uuid <<FK>>
-        --
-        amount: 
-        createdAt: date
-        updatedAt: date
+    entity "notification_channel" {
+      +id : uuid
+      --
+      name : text
     }
 
-    entity "FundRoundContribution"{
-        +fundRoundId: uuid <<FK>>
-        +userId: uuid <<FK>>
-        --
-        amount: NUMERIC
-        transactionId: uuid <<FK>>
-        createdAt: date
-        updatedAt: date
-    }
-}
-
-package "Expenses" {
-
-    entity "Expense" {
-        +id: uuid
-        --
-        fromUserId: uuid <<FK>>
-        currencyId: uuid <<FK>>
-        groupId: uuid <<FK>>
-        description: string
-        amount: NUMERIC
-        status: enum
-        createdAt: date
-        updatedAt: date
+    entity "user_notification_preference" {
+      +user_id : uuid <<FK>>
+      +event_id : uuid <<FK>>
+      +channel_id : uuid <<FK>>
+      --
+      enabled : bool
     }
 
-    entity "ExpenseParticipant"{
-        +expenseId: uuid <<FK>>
-        +userId: uuid <<FK>>
-        --
-        amount: NUMERIC
-        createdAt: date
-        updatedAt: date
+    entity "group_notification_preference" {
+      +user_id : uuid <<FK>>
+      +group_id : uuid <<FK>>
+      +event_id : uuid <<FK>>
+      +channel_id : uuid <<FK>>
+      --
+      enabled : bool
     }
 }
 
 package "Governance" {
-    entity "Proposal"{
-        +proposalId: uuid
-        ---
-        groupId: uuid <<FK>>
-        createdBy: uuid <<FK>>
-        status: enum
-        createdAt: date
-        updatedAt: date
+    entity "proposal" {
+      +id : uuid
+      --
+      group_id : uuid <<FK>>
+      created_by : uuid <<FK>>
+      status : proposal_status
+      created_at : timestamp
+      updated_at : timestamp
+    }
+    note right of "proposal"
+      proposal_status:
+      Pending | Approved | Rejected
+      | Executed | Canceled | Expired | Failed
+      new_member = Core
+      withdraw / fund_round / investment = flags
+    end note
+
+    entity "vote" {
+      +proposal_id : uuid <<FK>>
+      +user_id : uuid <<FK>>
+      --
+      value : vote_type
+      created_at : timestamp
+    }
+    note right of "vote"
+      vote_type: Yes | No | Abstain
+    end note
+
+    entity "new_member_proposal" {
+      +proposal_id : uuid <<FK>>
+      --
+      new_member_id : uuid <<FK>>
     }
 
-    entity "Vote"{
-        +proposalId: uuid <<FK>>
-        +userId: uuid <<FK>>
-        --
-        vote: enum
-        createdAt: date
+    entity "withdraw_proposal" {
+      +proposal_id : uuid <<FK>>
+      --
+      amount : numeric
+      currency_id : uuid <<FK>>
     }
 
-    entity "WithdrawProposal"{
-        +proposalId: uuid <<FK>>
-        --
-        amount: NUMERIC
-        currency_id: uuid <<FK>>
-    }
-
-    entity "NewMemberProposal"{
-        +proposalId: uuid <<FK>>
-        --
-        newMemberId: uuid <<FK>>
-    }
-
-    entity "FundRoundProposal"{
-        +proposalId: uuid <<FK>>
-        --
-        targetAmount: NUMERIC
+    entity "fund_round_proposal" {
+      +proposal_id : uuid <<FK>>
+      --
+      target_amount : numeric
+      currency_id : uuid <<FK>>
     }
 }
 
-package "Investments" {
+package "Treasury + Chain (flags)" {
+    entity "currency" {
+      +currency_id : uuid
+      --
+      name : text
+      ticker : text <<unique>>
+      blockchain : blockchain
+      token_address : text
+      token_currency_id : text <<nullable>>
+      decimals : smallint
+      is_active : bool
+      created_at : timestamptz
+    }
+    note right of "currency"
+      blockchain: Ethereum | Sepolia
+      | Arbitrum | Base | Polygon
+      UNIQUE (blockchain, token_address)
+    end note
 
-    entity "InvestmentStrategy"{
-        +id: uuid
-        --
-        name: string
-        description: string
-        expectedReturn: NUMERIC
+    entity "user_wallet" {
+      +id : uuid
+      --
+      address : text
+      user_id : uuid <<FK>>
+      currency_id : uuid <<FK>>
+      balance : numeric
+      created_at : timestamp
+      updated_at : timestamp
     }
 
-    entity "InvestmentProposal"{
-        +proposalId <<FK>>
-        --
-        strategyId: uuid <<FK>>
-        amount: NUMERIC
-        status: enum
-        createdAt: date
-        updatedAt: date
+    entity "group_wallet" {
+      +id : uuid
+      --
+      address : text
+      group_id : uuid <<FK>>
+      currency_id : uuid <<FK>>
+      balance : numeric
+      created_at : timestamp
+      updated_at : timestamp
+    }
+
+    entity "transaction" {
+      +id : uuid
+      --
+      tx_hash : text <<nullable>>
+      amount : numeric
+      user_id : uuid <<FK>>
+      group_id : uuid <<FK>>
+      currency_id : uuid <<FK>>
+      address : text
+      description : text <<nullable>>
+      tx_type : transaction_type
+      created_at : timestamp
+      updated_at : timestamp
+    }
+    note right of "transaction"
+      transaction_type: Deposit | Withdraw
+      | Expense | Investment
+      | SettlementPayment | Claim
+    end note
+
+    entity "transaction_participant" {
+      +transaction_id : uuid <<FK>>
+      +user_id : uuid <<FK>>
+      --
+      amount : numeric
+      created_at : timestamp
+      updated_at : timestamp
+    }
+
+    entity "fund_round_contribution" {
+      +fund_round_proposal_id : uuid <<FK>>
+      +user_id : uuid <<FK>>
+      --
+      amount : numeric
+      transaction_id : uuid <<FK>>
+      created_at : timestamp
+      updated_at : timestamp
+    }
+
+    entity "blockchain_event" {
+      +id : uuid
+      --
+      event_type : text
+      sender : text
+      wallet_address : text
+      token_address : text
+      currency_id : uuid <<FK>>
+      gross_amount : numeric
+      fee_amount : numeric
+      net_amount : numeric
+      tx_hash : text
+      block_number : int8
+      created_at : timestamptz
+    }
+
+    entity "blockchain_sync_state" {
+      +sync_key : text
+      --
+      last_processed_block : int8
+      updated_at : timestamptz
+    }
+}
+
+package "Investments (flag)" {
+    entity "asset" {
+      +id : uuid
+      --
+      symbol : text
+      name : text
+      kind : text
+      price_provider : text
+      external_id : text
+      is_active : bool
+      created_at : timestamp
+    }
+
+    entity "investment_strategy" {
+      +id : uuid
+      --
+      name : text
+      description : text
+      risk_level : text
+      expected_return_percentage : numeric
+      duration_days : int4
+      created_at : timestamp
+      valuation_mode : text
+      category : text
+      ragequit_fee_bps : int4
+      leverage : int4
+    }
+
+    entity "strategy_allocation" {
+      +id : uuid
+      --
+      strategy_id : uuid <<FK>>
+      asset_id : uuid <<FK>>
+      weight_bps : int4
+    }
+
+    entity "investment_proposal" {
+      +proposal_id : uuid <<FK>>
+      --
+      amount : numeric
+      strategy_id : uuid <<FK>>
+      currency_id : uuid <<FK>>
+    }
+
+    entity "investment" {
+      +id : uuid
+      --
+      proposal_id : uuid <<FK>>
+      amount : numeric
+      current_value : numeric
+      actual_return : numeric <<nullable>>
+      status : investment_status
+      started_at : timestamp
+      matures_at : timestamp
+      created_at : timestamp
+      updated_at : timestamp
+      exit_kind : text <<nullable>>
+      fee_amount : numeric <<nullable>>
+      entry_exposure : numeric
+    }
+    note right of "investment"
+      investment_status:
+      Active | Matured | Withdrawn | Liquidated
+    end note
+
+    entity "investment_holding" {
+      +id : uuid
+      --
+      investment_id : uuid <<FK>>
+      asset_id : uuid <<FK>>
+      units : numeric
+      weight_bps_at_entry : int4
+      cost_basis_usd : numeric
+      created_at : timestamp
+    }
+
+    entity "investment_member" {
+      +id : uuid
+      --
+      investment_id : uuid <<FK>>
+      user_id : uuid <<FK>>
+      balance_at_investment : numeric
+      participation_pct : numeric
+      invested_amount : numeric
+      returned_amount : numeric <<nullable>>
+      withdrawn_at : timestamp <<nullable>>
+      created_at : timestamp
+    }
+
+    entity "investment_value_snapshot" {
+      +id : uuid
+      --
+      investment_id : uuid <<FK>>
+      value : numeric
+      snapshot_date : timestamp
+      created_at : timestamp
     }
 }
 
 '================ RELATIONS =================
 
-User ||--|| UserConfig
-User ||--o{ Friend
-User ||--o{ UserWallet
+user ||--o{ friend
+user ||--o{ user_in_group
+group ||--o{ user_in_group
+group ||--o{ group_permission
 
-User ||--o{ UserInGroup
-Group ||--o{ UserInGroup
+user ||--o{ expense
+group ||--o{ expense
+currency ||--o{ expense
+expense ||--o{ expense_participant
+user ||--o{ expense_participant
 
-Group ||--|| GroupConfig
-Group ||--o{ GroupWallet
+user ||--o{ notification
+group ||--o{ notification
+user ||--o{ user_notification_preference
+notification_event ||--o{ user_notification_preference
+notification_channel ||--o{ user_notification_preference
+user ||--o{ group_notification_preference
+group ||--o{ group_notification_preference
+notification_event ||--o{ group_notification_preference
+notification_channel ||--o{ group_notification_preference
 
-Currency ||--o{ Group
-Currency ||--o{ UserWallet
-Currency ||--o{ GroupWallet
+user ||--o{ proposal
+group ||--o{ proposal
+proposal ||--o{ vote
+user ||--o{ vote
+proposal ||--|| new_member_proposal
+proposal ||--|| withdraw_proposal
+proposal ||--|| fund_round_proposal
+proposal ||--|| investment_proposal
+user ||--o{ new_member_proposal
 
-User ||--o{ Expense
-Group ||--o{ Expense
-Currency ||--o{ Expense
+currency ||--o{ user_wallet
+user ||--o{ user_wallet
+currency ||--o{ group_wallet
+group ||--o{ group_wallet
 
-Expense ||--o{ ExpenseParticipant
-User ||--o{ ExpenseParticipant
+user ||--o{ transaction
+group ||--o{ transaction
+currency ||--o{ transaction
+transaction ||--o{ transaction_participant
+user ||--o{ transaction_participant
 
-User ||--o{ Transaction
-Group ||--o{ Transaction
-Currency ||--o{ Transaction
+fund_round_proposal ||--o{ fund_round_contribution
+user ||--o{ fund_round_contribution
+transaction ||--o{ fund_round_contribution
+currency ||--o{ fund_round_proposal
+currency ||--o{ withdraw_proposal
 
-Transaction ||--o{ TransactionParticipant
-User ||--o{ TransactionParticipant
+currency ||--o{ blockchain_event
 
-Proposal }o--|| User
-Proposal }o--|| Group
-
-Proposal ||--o{ Vote
-
-Proposal ||--|| WithdrawProposal: is a
-Proposal ||--|| NewMemberProposal: is a
-Proposal ||--|| FundRoundProposal: is a
-Proposal ||--|| InvestmentProposal: is a
-
-FundRoundProposal ||--o{ FundRoundContribution
-User ||--o{ FundRoundContribution
-Transaction ||--o{ FundRoundContribution
-
-InvestmentStrategy ||--o{ InvestmentProposal
+investment_strategy ||--o{ strategy_allocation
+asset ||--o{ strategy_allocation
+investment_strategy ||--o{ investment_proposal
+currency ||--o{ investment_proposal
+investment_proposal ||--o{ investment
+investment ||--o{ investment_holding
+asset ||--o{ investment_holding
+investment ||--o{ investment_member
+user ||--o{ investment_member
+investment ||--o{ investment_value_snapshot
 
 @enduml
