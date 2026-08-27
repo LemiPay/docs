@@ -1,7 +1,7 @@
 ---
 title: Proceso de Trabajo con Agentes
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - meta
@@ -57,5 +57,5 @@ Invocación: `/lemipay-ticket <ticket_id> [comentarios]` — también `ticket 20
 
 - `epic` / `story`
 - `backend` / `frontend` / `docs` / `devops`
-- `pre-launch` / `feature-flags` / `logging` / `admin`
+- `pre-launch` / `feature-flags` / `logging` / `admin` / `ux`
 - `priority: high` / `priority: medium`

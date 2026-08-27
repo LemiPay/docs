@@ -1,7 +1,7 @@
 ---
 title: Roadmap Pre-Launch LemiPay
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - roadmap
@@ -10,7 +10,7 @@ tags:
 ---
 # Roadmap Pre-Launch LemiPay
 
-Cola inmediata (corte 2026-08-26): [[01 - Roadmap/ESTADO_ACTUAL]].
+Cola inmediata (corte 2026-08-27): [[01 - Roadmap/ESTADO_ACTUAL]].
 
 ## Objetivo general
 
@@ -26,10 +26,11 @@ Llevar la app de "proyecto de Lab 1 usable" a un producto simple, confiable y li
 
 ## Cola inmediata (no reabre el largo plazo)
 
-1. Admin Panel — [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]]
-2. UX Core
-3. Seguridad
-4. Usuarios reales
+1. UX Core — [[01 - Roadmap/SPRINT_3_UX_CORE]] / epic [#215](https://github.com/LemiPay/core/issues/215)
+2. Seguridad
+3. Usuarios reales
+
+Admin Panel ya cerró: [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]].
 
 ## Fases
 
@@ -40,14 +41,15 @@ Llevar la app de "proyecto de Lab 1 usable" a un producto simple, confiable y li
 - [x] Sistema de Feature Flags (backend + frontend) ([#197](https://github.com/LemiPay/core/issues/197))
 - [x] Desactivar features de fricción (avanzadas en `false`; `core/.env.example` y `core/.env.azure`)
 - [x] Crear estructura de documentación Obsidian (vault en `docs/` de este repo)
-- [ ] Admin Panel v1 — Sprint 2
+- [x] Admin Panel v1 — Sprint 2 ([#209](https://github.com/LemiPay/core/issues/209))
 - [ ] Auditoría inicial de seguridad (se hace **después** de UX Core; ver cola inmediata)
 
 ### Fase 1 – Core limpio + UX (Semana 3-7)
 
-- [ ] Simplificar flujos principales (crear grupo, agregar gasto, saldar deudas, invitar)
+- [ ] Modelo de miembros: asientos sin user, link abierto + nominada, claim con email. **No** es “invitar amigos que ya tienen cuenta”. Ver [[02 - Core/MIEMBROS_E_INVITACIONES]]
+- [ ] Simplificar flujos principales (crear grupo, cargar gasto, saldar deudas, invitar con un link)
 - [ ] Rediseño UX/UI mobile-first + desktop
-- [ ] Pulir notificaciones y emails
+- [ ] Pulir notificaciones y emails (solo si hay email)
 - [ ] Testing intensivo del core
 - [ ] Soft launch interno + feedback de 5-10 personas cercanas
 
@@ -76,14 +78,15 @@ El largo plazo no se reabre: custodial Mercado Pago → blockchain UX → non-cu
 
 ## Estado actual
 
-Ver [[01 - Roadmap/ESTADO_ACTUAL]]. App deployada. Logging y flags mergeados. Core activo, avanzadas apagadas. Siguiente: Admin Panel.
+Ver [[01 - Roadmap/ESTADO_ACTUAL]]. App deployada. Logging, flags y Admin Panel mergeados. Core activo, avanzadas apagadas. Siguiente: UX Core (asientos + links; el modelo **no** está en código todavía).
 
 ## Documentos
 
 - [x] Scope del Core
 - [x] Feature Flags (decisiones + estado post-#208)
 - [x] Logger (decisiones post-#207)
-- [x] Admin Panel (decisiones v1; implementación = Sprint 2)
+- [x] Admin Panel (decisiones v1; implementación cerrada)
+- [x] Miembros e invitaciones (decisiones 2026-08-27; implementación = Sprint 3)
 - [x] Principios de UX
 - [ ] Checklist de Seguridad
 - [ ] User Flows del Core

@@ -1,7 +1,7 @@
 ---
 title: Estructura del Vault LemiPay
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - meta
@@ -22,7 +22,7 @@ El índice vivo es [[INDEX]].
 
 - `00 - Meta/` — cómo está armado el vault y cómo se trabaja
 - `01 - Roadmap/` — estado, sprints, roadmap pre-launch
-- `02 - Core/` — alcance del producto día 1, flags, admin
+- `02 - Core/` — alcance del producto día 1, flags, admin, miembros e invitaciones
 - `03 - Architecture/` — decisiones de arquitectura (logger)
 - `05 - UX-UI/` — principios de interfaz
 - raíz — `ABSTRACT`, `STACK_DESCRIPTION`, `USE_CASES`, `INDEX`, `README`

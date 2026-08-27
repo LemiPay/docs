@@ -4,30 +4,47 @@
 
 # Casos de Uso
 
-Actores y capacidades **según `core/`**. Lo apagado con flags no está disponible en el día 1 aunque el código exista.
+Actores y capacidades **según `core/`**, con una excepción: el camino de invitar / unirse a grupo ya está decidido (2026-08-27) y **aún no está en código**. Ver [[02 - Core/MIEMBROS_E_INVITACIONES]].
+
+Lo apagado con flags no está disponible en el día 1 aunque el código exista.
 
 ## Usuario no autenticado
 
 - Ver landing y docs.
 - Ver `/status` (ping de frontend + `GET /health`).
-- Registrarse con nombre, email y contraseña (`POST /auth/register`).
+- Registrarse con nombre, email y contraseña (`POST /auth/register`) — hace falta **una** cuenta para **crear** un grupo.
 - Iniciar sesión con email/contraseña (`POST /auth/login`).
 - Iniciar sesión con wallet (Reown): `POST /auth/request-challenge` + firma + `POST /auth/verify-challenge`. Puede asociar email/nombre si la wallet no está linkeada.
-- No entra a dashboard / grupos / perfil (el layout redirige a `/login`).
+- Unirse a un grupo **sin** registrarse, por link:
+  - **Link abierto:** elige un `display_name` único en el grupo y se crea el asiento. Nombre tomado = error, no pisar.
+  - **Invitación nominada:** entra ya sentado con el nombre que puso el admin.
+- Sin el token del URL no es miembro ni ve el grupo.
+- No entra al resto de LemiPay (amigos, perfil, crear grupos) hasta el claim.
 
-El login con wallet es **Core**. No depende de `FEATURE_WALLETS_ONCHAIN`.
+Hoy en código el join todavía es invitación new-member a usuarios LemiPay.
+
+El login con wallet es **Core**. No depende de `FEATURE_WALLETS_ONCHAIN`. Es del *usuario* dueño, no del asiento.
+
+## Asiento de grupo (sin email)
+
+Decisión 2026-08-27. No implementado todavía.
+
+- Existe solo en ese grupo: `display_name` único, `user_id` null, sin password, con balance.
+- Ve y usa **ese** grupo: gastos Splitwise (igual o custom), deudas, saldar. Quien ya está sentado puede cargar gastos.
+- Sesión de asiento (cookie) tras el link. Otro dispositivo = hace falta el link. No hay login con password de miembro.
+- No es admin del grupo.
+- Claim: agrega email + password de cuenta. Email nuevo crea `user`; existente se vincula. Un user no puede estar dos veces en el mismo grupo. Recién ahí existe el resto de LemiPay.
 
 ## Usuario autenticado (Core, flags on)
 
 - Ver y editar su perfil (`/profile/me`, `GET /user/me`). Ver otro usuario (`/users/[id]`, `GET /user/id/{id}`).
 - Amigos: buscar usuarios, enviar solicitud, aceptar/rechazar, listar, bloquear, eliminar (`/friend/*`).
-- Grupos: crear, listar los propios, ver detalle y miembros, editar nombre/descripción, salir, promover admin, borrar grupo, entrar en resolución de deudas.
-- Invitar miembros (propuesta new-member) y responder invitaciones. Siguen con `FEATURE_GOVERNANCE_ADVANCED=false`.
-- Gastos: crear, listar, editar/eliminar los propios; el admin del grupo puede editar/eliminar cualquiera (`/expense/admin/...`).
+- Grupos: crear (hace falta una cuenta), listar los propios, ver detalle y miembros, editar nombre/descripción, salir, promover admin, borrar grupo, entrar en resolución de deudas.
+- Invitar: el admin comparte **link abierto** o crea **invitación nominada**. Puede regenerar el abierto (el viejo deja de andar) y anular una nominada pendiente. Camino día 1 **no** es propuesta new-member a un user existente. Hoy en código sigue new-member; se reemplaza ([#224](https://github.com/LemiPay/core/issues/224) / [#218](https://github.com/LemiPay/core/issues/218)).
+- Gastos: crear, listar, editar/eliminar los propios; el admin del grupo puede editar/eliminar cualquiera (`/expense/admin/...`). Participantes = asientos (con o sin `user`).
 - Balances: ver quién debe a quién, settlements, pagar settlement, claim (`/core/balances`, `/core/get-settlements`, `/core/pay-settlement`, `/core/claim`).
-- Notificaciones in-app: listar, marcar leídas, preferencias globales y por grupo. Emails básicos de auth/eventos.
+- Notificaciones in-app: listar, marcar leídas, preferencias globales y por grupo. Emails básicos de auth/eventos — **solo si hay email**.
 - Permisos del grupo: ver; el admin agrega/quita acciones por rol (`/permission/{group_id}`).
-- Gobernanza de invitaciones en `/dashboard/governance` (new-member).
 
 ## Admin de grupo (además del usuario autenticado)
 
@@ -35,10 +52,12 @@ Permisos por defecto / configurables (`group_permission`):
 
 - Actualizar o eliminar el grupo.
 - Iniciar resolución de deudas.
-- Invitar miembros.
-- Cancelar propuestas.
+- Invitar miembros (link abierto y/o nominada).
+- Cancelar / anular invitaciones pendientes; regenerar el link abierto.
 - Editar o eliminar cualquier gasto.
 - (Apagado hoy) crear/cancelar rondas de fondeo y crear inversiones.
+
+Asiento sin email **no** es admin.
 
 No hay umbral de votos por grupo en DB. El quorum global de config es un entero de boot (`GovernanceConfig.quorum`), no una pantalla de settings.
 
@@ -62,7 +81,7 @@ No hay on-ramp (fiat → crypto) en el client ni en el server.
 
 - Abrir `/admin` y ver KPIs / flags / status.
 
-**No implementado.** No hay rutas `admin` en el client ni endpoints `/admin/*` en el server. Ver [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]].
+Hecho. Epic [#209](https://github.com/LemiPay/core/issues/209). Ver [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]] (cerrado).
 
 ---
 

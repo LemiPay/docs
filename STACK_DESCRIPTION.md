@@ -45,7 +45,7 @@ El API **no** usa prefijo `/api`. Orígenes públicos: `GET /health`, `GET /conf
 - Capas: `domain` / `application` / `infrastructure` / `interfaces/http` / `setup`.
 - Flags: struct `FeatureFlags` leída de `FEATURE_*` al boot, expuesta en `GET /config` (JSON snake_case).
 - Guards avanzados: middleware → **404** (no 403) sobre `/wallet`, `/group-wallet`, `/transaction`, `/investment`, `/blockchain-event`, `/ai`, y sobre withdraw / fund-rounds dentro de `/governance`.
-- New-member (invitaciones) **no** se 404-ea: es Core.
+- New-member (invitaciones) **no** se 404-ea: es Core. El camino día 1 deja de ser invite a usuarios LemiPay; pasa a asientos + links ([[02 - Core/MIEMBROS_E_INVITACIONES]], no implementado todavía).
 - `GET /health` responde `{ "status": "ok" }`. No pings a la DB.
 - CORS en el router: origen de desarrollo `http://localhost:5173`.
 - Bind: `0.0.0.0:${PORT}` (default 3000).

@@ -1,7 +1,7 @@
 ---
 title: Admin Panel
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - admin
@@ -62,4 +62,4 @@ Anotar acá; no inventar en el ticket.
 
 ## Estado
 
-No implementado en `core/`. Flags y logger sí.
+Implementado. Epic [#209](https://github.com/LemiPay/core/issues/209) cerrado (PR [#214](https://github.com/LemiPay/core/pull/214)). No reabrir. Sprint: [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]] (cerrado). Flags y logger también.

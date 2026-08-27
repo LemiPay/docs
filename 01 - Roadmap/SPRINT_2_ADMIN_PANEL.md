@@ -1,8 +1,8 @@
 ---
 title: Sprint 2 - Admin Panel
 created: 2026-08-26
-updated: 2026-08-26
-status: active
+updated: 2026-08-27
+status: closed
 tags:
   - sprint
   - admin
@@ -10,6 +10,10 @@ tags:
 ---
 
 # Sprint 2 — Admin Panel
+
+**Cerrado.** Epic [#209](https://github.com/LemiPay/core/issues/209), PR [#214](https://github.com/LemiPay/core/pull/214). No reabrir.
+
+Siguiente: [[01 - Roadmap/SPRINT_3_UX_CORE]].
 
 ## Objetivo
 
@@ -19,9 +23,9 @@ Es parte operativa del pre-lanzamiento. No es una feature de usuario final. No s
 
 Decisiones de producto: [[02 - Core/ADMIN_PANEL]]. Proceso: [[00 - Meta/PROCESO_DE_TRABAJO_CON_AGENTES]].
 
-## Estado en `core/` (hoy)
+## Estado en `core/`
 
-No hay `core/client/src/routes/admin/`. No hay nest `/admin` en el router de Axum. Lo que existe con “admin” en el nombre es **admin de grupo** (editar gastos, `is_group_admin_middleware`), no super-admin de producto.
+Implementado. Super-admin de producto (no confundir con admin de grupo).
 
 ## Fuera de alcance
 
