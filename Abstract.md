@@ -13,7 +13,7 @@ App live: https://lemipay.app/
 ## Qué está encendido (Core)
 
 - Registro y login con email/contraseña, y login con wallet (Reown AppKit + challenge/verify en `/auth`).
-- Perfil, amigos, grupos, invitaciones a miembros (propuestas new-member).
+- Perfil, amigos, grupos. Invitaciones: hoy en código son propuestas new-member a usuarios LemiPay; el producto día 1 acordado es asientos + link abierto / nominada ([[02 - Core/MIEMBROS_E_INVITACIONES]], aún no implementado).
 - Gastos (crear, dividir, editar/eliminar) y balances / settlements / claim.
 - Notificaciones in-app y emails básicos.
 - Permisos por rol en el grupo y resolución de deudas.
@@ -31,7 +31,7 @@ Cambio de flags = deploy del backend. Detalle: [[02 - Core/SCOPE_DEL_CORE]] y [[
 ## Qué no está implementado
 
 - On-ramps (Mercado Pago u otros): roadmap, no hay código de pasarela.
-- Panel `/admin` de super-admin: Sprint 2, no hay rutas ni guard.
+- Panel `/admin` de super-admin: hecho (epic [#209](https://github.com/LemiPay/core/issues/209)).
 - Account Abstraction como producto (ERC-4337 “full”): el login web3 verifica firmas EOA y ERC-6492; no hay smart accounts propias ni abstracción de gas como feature de usuario.
 
 ## Visión (no es el estado actual)

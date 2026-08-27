@@ -1,7 +1,7 @@
 ---
 title: Índice
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - index
@@ -27,10 +27,12 @@ Los agentes empiezan por acá, luego [[00 - Meta/ESTRUCTURA_DEL_VAULT]] y [[00 -
 ## 01 - Roadmap
 - [[01 - Roadmap/ESTADO_ACTUAL]]
 - [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]]
+- [[01 - Roadmap/SPRINT_3_UX_CORE]]
 - [[01 - Roadmap/PRE_LAUNCH_ROADMAP]]
 
 ## 02 - Core
 - [[02 - Core/SCOPE_DEL_CORE]]
+- [[02 - Core/MIEMBROS_E_INVITACIONES]]
 - [[02 - Core/FEATURE_FLAGS_DECISIONES_DE_DISENO]]
 - [[02 - Core/FEATURE_FLAGS]]
 - [[02 - Core/ADMIN_PANEL]]

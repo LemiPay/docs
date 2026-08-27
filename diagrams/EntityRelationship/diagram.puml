@@ -54,6 +54,10 @@ package "Groups (Core)" {
     note right of "user_in_group"
       group_role: Admin | Member
       group_member_status: Active | Banned | Left
+      El modelo de miembros cambia con #224
+      (asiento: display_name único por group_id,
+      user_id nullable). Esta tabla es el schema
+      actual, no el diseño nuevo.
     end note
 
     entity "group_permission" {

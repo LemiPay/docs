@@ -1,7 +1,7 @@
 ---
 title: Feature Flags - Decisiones de Diseño
 created: 2026-08-24
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - design-decision
@@ -65,7 +65,7 @@ Env var → clave JSON en `GET /config` (snake_case; serde default, sin rename):
 - Inversiones en dashboard y rutas de investments se ocultan/redirigen si `investments` está off.
 - ChatAssistant solo si `ai_chat`.
 - Wallets de perfil solo si `wallets_onchain`.
-- El sidebar sigue mostrando Gobernanza: las invitaciones new-member son Core.
+- El sidebar sigue mostrando Gobernanza: leftover del invite new-member. Se corrige en UX Core; “gobernanza” no es label del camino Core.
 - Los flags de Core (`groups`, `expenses`, etc.) **hoy no ocultan** UI. Solo se publican.
 
 ### Backend
@@ -78,7 +78,7 @@ Env var → clave JSON en `GET /config` (snake_case; serde default, sin rename):
   - `/blockchain-event` ← `blockchain`
   - `/ai` ← `ai_chat`
   - bajo `/governance`: withdraw ← `governance_advanced`; fund-round ← `fund_rounds`
-- Invitaciones new-member **no** se protegen (`/governance/my`, `/received`, `/new-member/...`, etc.).
+- Invitaciones new-member **no** se protegen (`/governance/my`, `/received`, `/new-member/...`, etc.). Ese camino se reemplaza por asientos + links ([[02 - Core/MIEMBROS_E_INVITACIONES]]); no está en código todavía.
 - `FEATURE_BLOCKCHAIN=false` además **no arranca** el live sync del vault (poll RPC).
 - Flags de Core **no** 404-ean sus APIs.
 
@@ -94,7 +94,7 @@ El login web3 (`/auth/request-challenge`, `/auth/verify-challenge`, Reown en el 
 
 - Solo lectura del mapa actual.
 - Fuente: el mismo sistema (reusa `GET /config` / `GET /admin/flags`).
-- Panel todavía no implementado: [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]].
+- Panel implementado: [[02 - Core/ADMIN_PANEL]] / [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]] (cerrado). No reabrir.
 
 ## Principios
 

@@ -1,7 +1,7 @@
 ---
 title: Estado Actual
 created: 2026-08-26
-updated: 2026-08-26
+updated: 2026-08-27
 status: active
 tags:
   - roadmap
@@ -11,7 +11,7 @@ tags:
 
 # Estado Actual
 
-Fecha de este corte: 2026-08-26. Contrastado con `core/`.
+Fecha de este corte: 2026-08-27. Contrastado con `core/` (código) y con las decisiones de este vault.
 
 ## Producto
 
@@ -37,9 +37,17 @@ Stack: SvelteKit CSR (`core/client`) + Rust/Axum/Diesel/PostgreSQL (`core/server
 - En código: `FeatureFlags` en `setup/config.rs`, `GET /config`, store `config` en el client, middleware `feature_guard` → 404.
 - Decisiones: [[02 - Core/FEATURE_FLAGS_DECISIONES_DE_DISENO]].
 
+### Admin Panel
+
+- Epic [#209](https://github.com/LemiPay/core/issues/209) cerrado.
+- PR [#214](https://github.com/LemiPay/core/pull/214) mergeada.
+- Decisiones: [[02 - Core/ADMIN_PANEL]]. Sprint: [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]] (cerrado). No reabrir.
+
 ## Core activo
 
-Día 1 = Splitwise. Encendido: registro/login (email y wallet Reown), perfil, amigos (request/accept/block/unfriend/search), grupos, invitaciones new-member, expenses, balances/settlements/claim, permisos por rol, resolución de deudas, notificaciones in-app y emails básicos, `/status`.
+Día 1 = Splitwise. Encendido **hoy en código**: registro/login (email y wallet Reown), perfil, amigos (request/accept/block/unfriend/search), grupos, invitaciones new-member a usuarios LemiPay, expenses, balances/settlements/claim, permisos por rol, resolución de deudas, notificaciones in-app y emails básicos, `/status`.
+
+El modelo de miembros acordado el 2026-08-27 (asientos sin user, dos tipos de link, claim con email) **no está en código**. Decisiones: [[02 - Core/MIEMBROS_E_INVITACIONES]]. Implementación: [[01 - Roadmap/SPRINT_3_UX_CORE]] / epic [#215](https://github.com/LemiPay/core/issues/215).
 
 Apagado con flags (código intacto): treasury / fondo común, fund rounds, investments, governance avanzada (retiros), blockchain, wallets on-chain de perfil, AI chat.
 
@@ -49,16 +57,15 @@ Detalle: [[02 - Core/SCOPE_DEL_CORE]].
 
 ## Qué sigue (orden)
 
-1. **Admin Panel** — Sprint 2. Operativo, no es feature de usuario final. Ver [[01 - Roadmap/SPRINT_2_ADMIN_PANEL]] y [[02 - Core/ADMIN_PANEL]].
-2. **UX Core** — mobile-first, flujos cortos, copy sin jerga. Principios en [[05 - UX-UI/PRINCIPIOS_DE_DISENO]].
-3. **Seguridad** — auditoría (hoy no hay checklist en el vault).
-4. **Usuarios reales** — soft launch cercano, después primeros usuarios.
+1. **UX Core** — asientos + links + claim; mobile-first; copy sin jerga. Ver [[01 - Roadmap/SPRINT_3_UX_CORE]], [[02 - Core/MIEMBROS_E_INVITACIONES]] y epic [#215](https://github.com/LemiPay/core/issues/215). Principios en [[05 - UX-UI/PRINCIPIOS_DE_DISENO]].
+2. **Seguridad** — auditoría (hoy no hay checklist en el vault).
+3. **Usuarios reales** — soft launch cercano, después primeros usuarios.
 
 El roadmap largo no cambia: on-ramp custodial Mercado Pago → pulir entrada blockchain → camino non-custodial. Ver [[01 - Roadmap/PRE_LAUNCH_ROADMAP]].
 
 ## No implementado todavía
 
-- Ruta `/admin`, guard de super-admin, KPIs, lectura de flags en UI de admin (no hay `routes/admin/` ni `/admin/*` en Axum).
+- Modelo de asientos (sin `user_id`) ni los dos tipos de link de invitación. El invite en código sigue siendo new-member a usuarios LemiPay.
 - Rediseño UX del Core. La landing todavía habla de tesorería / DeFi con esas flags en false.
 - Auditoría de seguridad.
 - On-ramps.
